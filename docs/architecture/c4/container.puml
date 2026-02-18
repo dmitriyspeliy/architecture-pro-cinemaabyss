@@ -1,0 +1,44 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title CinemaAbyss — C4 Container Diagram (To-Be)
+
+Person(user, "Пользователь", "Смотрит фильмы, ставит оценки, оформляет подписки")
+Container(clientApps, "Client Apps", "Web / Mobile / SmartTV", "Разные интерфейсы. Работают через единый вход (Gateway).")
+
+System_Boundary(cinema, "CinemaAbyss (Kubernetes Cluster)") {
+
+    Container(ingress, "K8s Ingress", "Nginx / Ingress Controller", "Входящий трафик в кластер.")
+    Container(proxy, "Proxy Service (API Gateway)", "Go", "Единая точка входа. Strangler Fig: маршрутизация трафика между монолитом и микросервисами (feature flags, % traffic).")
+
+    Container(monolith, "Legacy Monolith", "Go", "Пользователи, платежи, подписки, интеграции, часть доменной логики (переходный период).")
+    Container(movies, "Movies Service", "Go", "Метаданные фильмов, жанры, актёры, рейтинги. Выделенный домен Movies/Metadata.")
+    Container(events, "Events Service", "Go", "Публикация доменных событий и интеграция с Kafka (MVP event-driven).")
+
+    ContainerDb(pg, "PostgreSQL", "Database", "Хранение данных. На раннем этапе может быть общая БД; целевое состояние — отдельные схемы/БД по сервисам.")
+    ContainerQueue(kafka, "Kafka", "Event Bus", "Асинхронное взаимодействие и интеграции.")
+}
+
+System_Ext(payment, "Платежная система", "Внешний провайдер")
+System_Ext(recsys, "Рекомендательная система", "Внешний сервис рекомендаций")
+System_Ext(s3, "S3 Storage", "Object Storage")
+
+Rel(user, clientApps, "Использует")
+Rel(clientApps, ingress, "HTTPS")
+Rel(ingress, proxy, "Route")
+
+Rel(proxy, monolith, "REST")
+Rel(proxy, movies, "REST")
+
+Rel(monolith, pg, "SQL")
+Rel(movies, pg, "SQL")
+
+Rel(monolith, payment, "REST/SDK")
+Rel(monolith, s3, "S3 API")
+
+Rel(monolith, events, "REST", "Передает доменные события (переходно)")
+Rel(events, kafka, "Produce")
+
+Rel(kafka, recsys, "Consume", "События для рекомендаций/аналитики")
+
+@enduml
