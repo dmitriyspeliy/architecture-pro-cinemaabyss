@@ -5,7 +5,8 @@ global:
 
 # Image pull secrets
 imagePullSecrets:
-  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6
+  name: dockerconfigjson
+  dockerconfigjson: "ew0KCSJhdXRocyI6IHsNCgkJImdoY3IuaW8iOiB7DQoJCQkiYXV0aCI6ICJaRzFwZEhKcGVYTndaV3hwZVRwbmFIQmZUMFZGTmpaNk9EZHVhbmxFVmpoRllUVnRWbGxLYkhnemRXcFpPRGxuTTJaelIzQjYiDQoJCX0NCgl9LA0KCSJjcmVkc1N0b3JlIjogImRlc2t0b3AiLA0KCSJjdXJyZW50Q29udGV4dCI6ICJkZXNrdG9wLWxpbnV4IiwNCgkicGx1Z2lucyI6IHsNCgkJIi14LWNsaS1oaW50cyI6IHsNCgkJCSJlbmFibGVkIjogInRydWUiDQoJCX0NCgl9LA0KCSJmZWF0dXJlcyI6IHsNCgkJImhvb2tzIjogInRydWUiDQoJfQ0KfQ=="
 # Database configuration
 database:
   host: postgres
@@ -33,7 +34,7 @@ database:
 monolith:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/monolith
+    repository: ghcr.io/dmitriyspeliy/architecture-pro-cinemaabyss/monolith
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -53,7 +54,7 @@ monolith:
 proxyService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/proxy-service
+    repository: ghcr.io/dmitriyspeliy/architecture-pro-cinemaabyss/proxy-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -73,7 +74,7 @@ proxyService:
 moviesService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/movies-service
+    repository: ghcr.io/dmitriyspeliy/architecture-pro-cinemaabyss/movies-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -93,7 +94,7 @@ moviesService:
 eventsService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/events-service
+    repository: ghcr.io/dmitriyspeliy/architecture-pro-cinemaabyss/events-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -183,3 +184,6 @@ config:
   # Strangler Fig configuration
   gradualMigration: "true"
   moviesMigrationPercent: "100"
+  kafkaBrokers: "kafka:9092"
+
+
